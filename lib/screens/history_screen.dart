@@ -91,7 +91,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   // Fonction pour modifier une transaction
   Future<void> _editTransaction(Map<String, dynamic> transaction) async {
     TextEditingController amountController =
-        TextEditingController(text: transaction['amount'].toString());
+        TextEditingController(text: transaction['amount'].toStringAsFixed(2));
     TextEditingController commentController =
         TextEditingController(text: transaction['comment']);
 
@@ -131,17 +131,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
             TextButton(
               onPressed: () async {
                 double newAmount =
-                    double.tryParse(amountController.text) ?? 0.0;
+                    double.tryParse(amountController.text) ?? 0.00;
                 String newComment = commentController.text;
-
                 if (newAmount != transaction['amount'] ||
-                    newComment != transaction['comment']) {
+                    newComment != transaction['comment'] ||
+                    newAmount != 0.00) {
                   await DBHelper.updateTransaction(transaction['id'], newAmount,
                       newComment.isEmpty ? "Aucun commentaire" : newComment);
                   _loadTransactions();
+                  Navigator.of(context).pop();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Veuillez entrer un montant valide')),
+                  );
+                  return;
                 }
-
-                Navigator.of(context).pop();
               },
               child: Text('Sauvegarder'),
             ),
