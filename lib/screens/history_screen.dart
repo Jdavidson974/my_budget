@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -36,8 +37,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   // Méthode pour afficher un sélecteur de mois et année
+
   Future<void> _selectMonth(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+    final DateTime? picked = await showMonthPicker(
       context: context,
       initialDate: DateTime(_selectedYear, _selectedMonth),
       firstDate: DateTime(2020),
