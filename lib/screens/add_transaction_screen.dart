@@ -32,11 +32,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       _transactionType = 'gain';
                     });
                   },
-                  child: Text('Gain'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         _transactionType == 'gain' ? Colors.green : Colors.grey,
                   ),
+                  child: Text('Gain'),
                 ),
                 SizedBox(width: 20),
                 ElevatedButton(
@@ -45,12 +45,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       _transactionType = 'dépense';
                     });
                   },
-                  child: Text('Dépense'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _transactionType == 'dépense'
                         ? Colors.red
                         : Colors.grey,
                   ),
+                  child: Text('Dépense'),
                 ),
               ],
             ),

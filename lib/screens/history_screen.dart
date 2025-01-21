@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:intl/intl.dart'; // Importer intl pour la gestion des dates
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -13,11 +14,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String _selectedType = 'all'; // 'all', 'gain', 'dépense'
   int _selectedYear = DateTime.now().year;
   int _selectedMonth = DateTime.now().month;
+  String? _formattedMonthYear; // Stocker la date formatée
 
   @override
   void initState() {
     super.initState();
     _loadTransactions();
+
+    // Formater le mois et l'année
+    final now = DateTime.now();
+    _formattedMonthYear = DateFormat('MMMM yyyy', 'fr_FR').format(now);
   }
 
   // Charger les transactions depuis SQLite avec les filtres et calculer le total
@@ -69,6 +75,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       setState(() {
         _selectedYear = picked.year;
         _selectedMonth = picked.month;
+        // Mettre à jour la valeur formatée après sélection du mois
+        _formattedMonthYear = DateFormat('MMMM yyyy', 'fr_FR').format(picked);
       });
       _loadTransactions();
     }
@@ -120,7 +128,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     children: [
                       Icon(IconData(0xe122, fontFamily: 'MaterialIcons')),
                       SizedBox(width: 10),
-                      Text('$_selectedMonth/$_selectedYear'),
+                      // Affichage du mois et de l'année formatés
+                      Text(_formattedMonthYear ?? ''),
                     ],
                   ),
                 ),
@@ -147,6 +156,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       itemCount: _transactions.length,
                       itemBuilder: (context, index) {
                         final transaction = _transactions[index];
+                        // Formater la date dans le format YY/MM/YYYY
+                        final transactionDate = DateFormat('yy/MM/yyyy')
+                            .format(DateTime.parse(transaction['date']));
+
                         return ListTile(
                           title: Text(
                             '${transaction['amount'].toStringAsFixed(2)}€',
@@ -160,9 +173,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           subtitle: Text(
                               transaction['comment'] ?? 'Aucun commentaire'),
                           trailing: Text(
-                            transaction['date'].substring(0, 10),
+                            transactionDate,
                             style: TextStyle(fontWeight: FontWeight.bold),
-                          ), // Affiche uniquement la date
+                          ), // Affiche la date formatée
                         );
                       },
                     ),
