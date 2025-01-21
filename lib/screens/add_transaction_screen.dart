@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../database/database_helper.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   @override
@@ -101,6 +102,27 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
                 // Ajouter la transaction dans la base de données
                 await DBHelper.addTransaction(transaction);
+
+                // Afficher un message Toast
+                String toastMessage = '';
+                if (_transactionType == 'gain') {
+                  toastMessage =
+                      'Votre gain de ${amount.toStringAsFixed(2)}€ a bien été ajouté.';
+                } else if (_transactionType == 'dépense') {
+                  toastMessage =
+                      'Votre dépense de ${amount.toStringAsFixed(2)}€ a bien été ajoutée.';
+                }
+
+                // Afficher le Toast
+                Fluttertoast.showToast(
+                  msg: toastMessage,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 16.0,
+                );
 
                 // Retour à l'écran principal avec une confirmation
                 Navigator.pop(context,
