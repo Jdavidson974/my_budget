@@ -1,5 +1,5 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
   static Database? _db;
@@ -116,5 +116,32 @@ class DBHelper {
     }
 
     return balance;
+  }
+
+  // Supprimer une transaction
+  static Future<void> deleteTransaction(int id) async {
+    final db = await initDB();
+    await db.delete(
+      tableName,
+      where: '$colId = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Mettre à jour une transaction
+  static Future<void> updateTransaction(
+      int id, double amount, String comment) async {
+    final db = await initDB();
+    await db.update(
+      tableName,
+      {
+        colAmount: amount,
+        colComment: comment,
+        colDate: DateTime.now()
+            .toString(), // Mettre à jour la date avec la date actuelle
+      },
+      where: '$colId = ?',
+      whereArgs: [id],
+    );
   }
 }

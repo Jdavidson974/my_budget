@@ -82,6 +82,68 @@ class _HistoryScreenState extends State<HistoryScreen> {
     }
   }
 
+  // Fonction pour supprimer une transaction
+  Future<void> _deleteTransaction(int transactionId) async {
+    await DBHelper.deleteTransaction(transactionId);
+    _loadTransactions();
+  }
+
+  // Fonction pour modifier une transaction
+  Future<void> _editTransaction(Map<String, dynamic> transaction) async {
+    TextEditingController amountController =
+        TextEditingController(text: transaction['amount'].toString());
+    TextEditingController commentController =
+        TextEditingController(text: transaction['comment']);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Modifier la transaction"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: 'Montant'),
+              ),
+              TextField(
+                controller: commentController,
+                decoration: InputDecoration(labelText: 'Commentaire'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () async {
+                double newAmount =
+                    double.tryParse(amountController.text) ?? 0.0;
+                String newComment = commentController.text;
+
+                if (newAmount != transaction['amount'] ||
+                    newComment != transaction['comment']) {
+                  await DBHelper.updateTransaction(transaction['id'], newAmount,
+                      newComment.isEmpty ? "Aucun commentaire" : newComment);
+                  _loadTransactions();
+                }
+
+                Navigator.of(context).pop();
+              },
+              child: Text('Sauvegarder'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,16 +232,61 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   : const Color.fromARGB(255, 175, 56, 48),
                             ),
                           ),
-                          subtitle: Text(
-                              transaction['comment'] ?? 'Aucun commentaire'),
-                          trailing: Text(
-                            transactionDate,
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ), // Affiche la date formatée
+                          subtitle: Text(transaction['comment'] ??
+                              'Aucun commentaire'), // Commentaire ici
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                transactionDate,
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              // Icône poubelle pour la suppression
+                              IconButton(
+                                icon: Icon(Icons.delete, color: Colors.red),
+                                onPressed: () async {
+                                  // Afficher une boîte de dialogue de confirmation avant de supprimer
+                                  bool? shouldDelete = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title:
+                                            Text("Confirmation de suppression"),
+                                        content: Text(
+                                            "Voulez-vous vraiment supprimer cette transaction ?"),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('Annuler'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: Text('Supprimer'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(true);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+
+                                  // Si l'utilisateur confirme, supprimer la transaction
+                                  if (shouldDelete == true) {
+                                    await _deleteTransaction(transaction['id']);
+                                  }
+                                },
+                              ),
+                              // Affichage de la date dans trailing
+                            ],
+                          ),
+                          onTap: () => _editTransaction(
+                              transaction), // Modifier la transaction
                         );
                       },
                     ),
-                  ),
+                  )
           ],
         ),
       ),
