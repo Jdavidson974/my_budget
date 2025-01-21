@@ -93,4 +93,28 @@ class DBHelper {
       orderBy: '$colDate DESC',
     );
   }
+
+  // Calcul du solde actuel
+  static Future<double> getCurrentBalance() async {
+    final db = await initDB();
+
+    // Récupérer toutes les transactions
+    List<Map<String, dynamic>> transactions = await db.query(tableName);
+
+    double balance = 0;
+
+    // Calculer le solde
+    for (var transaction in transactions) {
+      double amount = transaction['amount'];
+      String type = transaction['type'];
+
+      if (type == 'gain') {
+        balance += amount;
+      } else if (type == 'dépense') {
+        balance -= amount;
+      }
+    }
+
+    return balance;
+  }
 }

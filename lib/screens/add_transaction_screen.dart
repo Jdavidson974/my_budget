@@ -31,11 +31,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       _transactionType = 'gain';
                     });
                   },
+                  child: Text('Gain'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         _transactionType == 'gain' ? Colors.green : Colors.grey,
                   ),
-                  child: Text('Gain'),
                 ),
                 SizedBox(width: 20),
                 ElevatedButton(
@@ -102,8 +102,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 // Ajouter la transaction dans la base de données
                 await DBHelper.addTransaction(transaction);
 
-                // Retour à l'écran principal (ou un autre écran)
-                Navigator.pop(context);
+                // Retour à l'écran principal avec une confirmation
+                Navigator.pop(context,
+                    true); // Retourner "true" pour signaler que la transaction a été ajoutée
               },
               child: Text('Ajouter la transaction'),
             ),

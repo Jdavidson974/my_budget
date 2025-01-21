@@ -16,19 +16,10 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadBudget();
   }
 
-  // Charger le budget actuel
+  // Charger le budget actuel depuis la base de données
   Future<void> _loadBudget() async {
-    List<Map<String, dynamic>> transactions = await DBHelper.getTransactions();
-    double budget = 0.0;
-
-    for (var transaction in transactions) {
-      if (transaction['type'] == 'gain') {
-        budget += transaction['amount'];
-      } else if (transaction['type'] == 'dépense') {
-        budget -= transaction['amount'];
-      }
-    }
-
+    double budget = await DBHelper
+        .getCurrentBalance(); // Utilisation de la méthode optimisée
     setState(() {
       _currentBudget = budget;
     });
@@ -44,13 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Affichage du budget actuel
             Text(
               'Budget Actuel : ${_currentBudget.toStringAsFixed(2)}€',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 20),
+            // Ajouter une transaction
             ElevatedButton(
               onPressed: () async {
+                // Naviguer vers l'écran d'ajout de transaction
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -63,6 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               child: Text('Ajouter une Transaction'),
             ),
+            // Voir l'historique des transactions
             ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/history');
