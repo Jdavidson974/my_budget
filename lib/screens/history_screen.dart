@@ -103,6 +103,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              Text(
+                transaction['type'],
+                style: TextStyle(
+                    color: transaction["type"] == "gain"
+                        ? Colors.green
+                        : Colors.red),
+              ),
               TextField(
                 controller: amountController,
                 keyboardType: TextInputType.number,
@@ -130,7 +137,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 if (newAmount != transaction['amount'] ||
                     newComment != transaction['comment']) {
                   await DBHelper.updateTransaction(transaction['id'], newAmount,
-                      newComment.isEmpty ? "" : newComment);
+                      newComment.isEmpty ? "Aucun commentaire" : newComment);
                   _loadTransactions();
                 }
 
@@ -162,59 +169,66 @@ class _HistoryScreenState extends State<HistoryScreen> {
         child: Column(
           children: <Widget>[
             // Filtre par type
-            Row(
-              children: <Widget>[
-                Text('Filtrer par type: '),
-                SizedBox(width: 10),
-                DropdownButton<String>(
-                  value: _selectedType,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedType = newValue!;
-                    });
-                    _loadTransactions();
-                  },
-                  items: <String>['all', 'gain', 'dépense']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value == 'all' ? 'Tous' : capitalize(value)),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
+            _transactions.isEmpty
+                ? Text("")
+                : Row(
+                    children: <Widget>[
+                      Text('Filtrer par type: '),
+                      SizedBox(width: 10),
+                      DropdownButton<String>(
+                        value: _selectedType,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _selectedType = newValue!;
+                          });
+                          _loadTransactions();
+                        },
+                        items: <String>['all', 'gain', 'dépense']
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                                value == 'all' ? 'Tous' : capitalize(value)),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
             SizedBox(height: 20),
 
             // Filtre par mois
-            Row(
-              children: <Widget>[
-                Text('Filtrer par mois: '),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => _selectMonth(context),
-                  child: Row(
-                    children: [
-                      Icon(IconData(0xe122, fontFamily: 'MaterialIcons')),
+            _transactions.isEmpty
+                ? Text("")
+                : Row(
+                    children: <Widget>[
+                      Text('Filtrer par mois: '),
                       SizedBox(width: 10),
-                      // Affichage du mois et de l'année formatés
-                      Text(_formattedMonthYear ?? ''),
+                      ElevatedButton(
+                        onPressed: () => _selectMonth(context),
+                        child: Row(
+                          children: [
+                            Icon(IconData(0xe122, fontFamily: 'MaterialIcons')),
+                            SizedBox(width: 10),
+                            // Affichage du mois et de l'année formatés
+                            Text(_formattedMonthYear ?? ''),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
             SizedBox(height: 20),
 
             // Affichage du total
-            Text(
-              'Total des transactions: ${_totalAmount.toStringAsFixed(2)} €',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: _totalAmount >= 0 ? Colors.green : Colors.red,
-              ),
-            ),
+            _transactions.isEmpty
+                ? Text("")
+                : Text(
+                    'Total des transactions: ${_totalAmount.toStringAsFixed(2)} €',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _totalAmount >= 0 ? Colors.green : Colors.red,
+                    ),
+                  ),
             SizedBox(height: 20),
 
             // Liste des transactions

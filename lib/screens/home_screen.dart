@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Text(""),
         title: Text('My-Budget'),
       ),
       body: Center(
@@ -40,7 +41,11 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: _currentBudget >= 0 ? Colors.green : Colors.red,
+                color: _currentBudget > 0
+                    ? Colors.green
+                    : _currentBudget == 0
+                        ? Colors.black
+                        : Colors.red,
               ),
             ),
             SizedBox(height: 20),
