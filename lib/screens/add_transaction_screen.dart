@@ -95,7 +95,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 final transaction = {
                   'type': _transactionType,
                   'amount': amount,
-                  'comment': _commentController.text,
+                  'comment': _commentController.text.isEmpty
+                      ? null
+                      : _commentController.text,
                   'date':
                       DateTime.now().toIso8601String(), // Format de date ISO
                 };
