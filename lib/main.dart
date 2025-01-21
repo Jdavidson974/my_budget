@@ -4,19 +4,21 @@ import 'app_routes.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(MyBudgetApp());
+  runApp(MyApp());
 }
 
-class MyBudgetApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My-Budget',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomeScreen(), // Écran initial
-      onGenerateRoute: AppRoutes.generateRoute, // Gestionnaire de routes
+      initialRoute: '/',
+      onGenerateRoute: AppRoutes.generateRoute,
+      home: HomeScreen(),
       locale: Locale('fr', 'FR'), // Définit la locale en français
       supportedLocales: [
         Locale('en', 'US'),

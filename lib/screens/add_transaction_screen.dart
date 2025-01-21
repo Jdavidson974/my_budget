@@ -16,6 +16,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Rediriger vers la page principale
+            Navigator.pushNamed(context, '/home');
+          },
+        ),
         title: Text('Ajouter une transaction'),
       ),
       body: Padding(

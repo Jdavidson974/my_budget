@@ -18,8 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Charger le budget actuel depuis la base de données
   Future<void> _loadBudget() async {
-    double budget = await DBHelper
-        .getCurrentBalance(); // Utilisation de la méthode optimisée
+    double budget = await DBHelper.getCurrentBalance();
     setState(() {
       _currentBudget = budget;
     });
@@ -39,22 +38,21 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               'Budget Actuel : ${_currentBudget.toStringAsFixed(2)}€',
               style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: _currentBudget >= 0 ? Colors.green : Colors.red),
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: _currentBudget >= 0 ? Colors.green : Colors.red,
+              ),
             ),
             SizedBox(height: 20),
             // Ajouter une transaction
             ElevatedButton(
               onPressed: () async {
-                // Naviguer vers l'écran d'ajout de transaction
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddTransactionScreen()),
                 );
                 if (result == true) {
-                  // Recharger le budget après l'ajout
                   _loadBudget();
                 }
               },

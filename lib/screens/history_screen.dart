@@ -86,6 +86,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _deleteTransaction(int transactionId) async {
     await DBHelper.deleteTransaction(transactionId);
     _loadTransactions();
+    Navigator.pushNamed(context, '/home');
   }
 
   // Fonction pour modifier une transaction
@@ -130,7 +131,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 if (newAmount != transaction['amount'] ||
                     newComment != transaction['comment']) {
                   await DBHelper.updateTransaction(transaction['id'], newAmount,
-                      newComment.isEmpty ? "Aucun commentaire" : newComment);
+                      newComment.isEmpty ? "" : newComment);
                   _loadTransactions();
                 }
 
@@ -148,6 +149,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            // Rediriger vers la page principale
+            Navigator.pushNamed(context, '/home');
+          },
+        ),
         title: Text('Historique des Transactions'),
       ),
       body: Padding(

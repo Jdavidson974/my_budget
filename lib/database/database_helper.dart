@@ -126,6 +126,7 @@ class DBHelper {
       where: '$colId = ?',
       whereArgs: [id],
     );
+    await getCurrentBalance();
   }
 
   // Mettre à jour une transaction
@@ -143,5 +144,6 @@ class DBHelper {
       where: '$colId = ?',
       whereArgs: [id],
     );
+    await getCurrentBalance();
   }
 }
