@@ -9,6 +9,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
   List<Map<String, dynamic>> _transactions = [];
+  double _totalAmount = 0.0; // Total des transactions
   String _selectedType = 'all'; // 'all', 'gain', 'dépense'
   int _selectedYear = DateTime.now().year;
   int _selectedMonth = DateTime.now().month;
@@ -19,7 +20,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _loadTransactions();
   }
 
-  // Charger les transactions depuis SQLite avec les filtres
+  // Charger les transactions depuis SQLite avec les filtres et calculer le total
   Future<void> _loadTransactions() async {
     List<Map<String, dynamic>> transactions = [];
 
@@ -31,13 +32,31 @@ class _HistoryScreenState extends State<HistoryScreen> {
           _selectedType, _selectedYear, _selectedMonth);
     }
 
+    // Calculer le total des transactions en fonction du type sélectionné
+    double total = 0.0;
+    for (var transaction in transactions) {
+      double amount = transaction['amount'];
+      if (_selectedType == 'gain') {
+        total += amount; // Ajouter uniquement les gains
+      } else if (_selectedType == 'dépense') {
+        total -= amount; // Soustraire uniquement les dépenses
+      } else {
+        // Si 'all' est sélectionné, additionner les gains et soustraire les dépenses
+        if (transaction['type'] == 'gain') {
+          total += amount;
+        } else if (transaction['type'] == 'dépense') {
+          total -= amount;
+        }
+      }
+    }
+
     setState(() {
       _transactions = transactions;
+      _totalAmount = total; // Mettre à jour le total
     });
   }
 
   // Méthode pour afficher un sélecteur de mois et année
-
   Future<void> _selectMonth(BuildContext context) async {
     final DateTime? picked = await showMonthPicker(
       context: context,
@@ -69,6 +88,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Row(
               children: <Widget>[
                 Text('Filtrer par type: '),
+                SizedBox(width: 10),
                 DropdownButton<String>(
                   value: _selectedType,
                   onChanged: (String? newValue) {
@@ -81,7 +101,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
-                      child: Text(value == 'all' ? 'Tous' : value),
+                      child: Text(value == 'all' ? 'Tous' : capitalize(value)),
                     );
                   }).toList(),
                 ),
@@ -93,11 +113,29 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Row(
               children: <Widget>[
                 Text('Filtrer par mois: '),
+                SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => _selectMonth(context),
-                  child: Text('$_selectedMonth/$_selectedYear'),
+                  child: Row(
+                    children: [
+                      Icon(IconData(0xe122, fontFamily: 'MaterialIcons')),
+                      SizedBox(width: 10),
+                      Text('$_selectedMonth/$_selectedYear'),
+                    ],
+                  ),
                 ),
               ],
+            ),
+            SizedBox(height: 20),
+
+            // Affichage du total
+            Text(
+              'Total des transactions: ${_totalAmount.toStringAsFixed(2)} €',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: _totalAmount >= 0 ? Colors.green : Colors.red,
+              ),
             ),
             SizedBox(height: 20),
 
@@ -133,5 +171,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
       ),
     );
+  }
+
+  String capitalize(string) {
+    return "${string[0].toUpperCase()}${string.substring(1).toLowerCase()}";
   }
 }
