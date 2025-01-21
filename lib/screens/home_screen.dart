@@ -38,7 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
             // Affichage du budget actuel
             Text(
               'Budget Actuel : ${_currentBudget.toStringAsFixed(2)}€',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: _currentBudget >= 0 ? Colors.green : Colors.red),
             ),
             SizedBox(height: 20),
             // Ajouter une transaction
