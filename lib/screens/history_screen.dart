@@ -200,27 +200,24 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ],
                   ),
             SizedBox(height: 20),
-
             // Filtre par mois
-            _transactions.isEmpty
-                ? Text("")
-                : Row(
-                    children: <Widget>[
-                      Text('Filtrer par mois: '),
+            Row(
+              children: <Widget>[
+                Text('Filtrer par mois: '),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => _selectMonth(context),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_month),
                       SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: () => _selectMonth(context),
-                        child: Row(
-                          children: [
-                            Icon(IconData(0xe122, fontFamily: 'MaterialIcons')),
-                            SizedBox(width: 10),
-                            // Affichage du mois et de l'année formatés
-                            Text(_formattedMonthYear ?? ''),
-                          ],
-                        ),
-                      ),
+                      // Affichage du mois et de l'année formatés
+                      Text(_formattedMonthYear ?? ''),
                     ],
                   ),
+                ),
+              ],
+            ),
             SizedBox(height: 20),
 
             // Affichage du total
