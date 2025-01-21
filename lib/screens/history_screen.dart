@@ -86,7 +86,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future<void> _deleteTransaction(int transactionId) async {
     await DBHelper.deleteTransaction(transactionId);
     _loadTransactions();
-    Navigator.pushNamed(context, '/home');
   }
 
   // Fonction pour modifier une transaction
