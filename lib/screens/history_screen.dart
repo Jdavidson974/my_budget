@@ -242,7 +242,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       itemBuilder: (context, index) {
                         final transaction = _transactions[index];
                         // Formater la date dans le format YY/MM/YYYY
-                        final transactionDate = DateFormat('yy/MM/yyyy')
+                        final transactionDate = DateFormat('dd/MM/yyyy')
                             .format(DateTime.parse(transaction['date']));
 
                         return ListTile(
